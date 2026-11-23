@@ -187,22 +187,41 @@ public final class TelaLocacoes extends JPanel {
             });
 
             Runnable recalcular = () -> {
-                try {
-                    LocalDate dtIni = LocalDate.parse(inicio.getText().trim(), FORMATO_DATA);
-                    String txtFim = fim.getText().trim();
-                    LocalDate dtFim = txtFim.isEmpty() ? null : LocalDate.parse(txtFim, FORMATO_DATA);
+    try {
+        LocalDate dtIni = LocalDate.parse(
+            inicio.getText().trim(), FORMATO_DATA
+        );
 
-                    int qtd = locacaoController.calcularQuantidadeDiarias(dtIni, dtFim);
-                    campoQtdDiarias.setText(String.valueOf(qtd));
+        String txtFim = fim.getText().trim();
+        LocalDate dtFim = txtFim.isEmpty()
+            ? null
+            : LocalDate.parse(txtFim, FORMATO_DATA);
 
-                    String txtDiaria = campoValorDiaria.getText().trim().replace(",", ".");
-                    BigDecimal diaria = new BigDecimal(txtDiaria);
-                    BigDecimal total = diaria.multiply(BigDecimal.valueOf(qtd));
-                    campoValorTotal.setText(String.format(Locale.US, "%.2f", total));
-                } catch (Exception ignored) {
-                    campoValorTotal.setText("-");
-                }
-            };
+        int qtd = locacaoController.calcularQuantidadeDiarias(
+            dtIni, dtFim
+        );
+
+        campoQtdDiarias.setText(String.valueOf(qtd));
+
+        String txtDiaria = campoValorDiaria.getText()
+            .trim()
+            .replace(",", ".");
+
+        BigDecimal diaria = new BigDecimal(txtDiaria);
+        BigDecimal total = diaria.multiply(
+            BigDecimal.valueOf(qtd)
+        );
+
+        campoValorTotal.setText(
+            String.format(Locale.US, "%.2f", total)
+        );
+
+    } catch (DateTimeParseException e) {
+    campoValorTotal.setText("-");
+} catch (NumberFormatException e) {
+    campoValorTotal.setText("-");
+}
+};
 
             DocumentListener listenerCalculo = new DocumentListener() {
                 @Override
